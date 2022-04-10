@@ -184,11 +184,33 @@ class ASGBuilder(
         var argIndex = 0
         val args = ctx.functionDeclArgList()?.parameter()?.map { arg ->
             val argName = arg.name.processIdentifier()
-            val argType = context.resolveType(arg.type.processIdentifier()) ?: error("unresolved type")
+            val argAnnotationName = arg.annotation()?.Identifier()?.processIdentifier()
+
+            val argType = if (argAnnotationName == "target") {
+                val targetAutomatonName = arg.type.processIdentifier()
+
+                context.resolveAutomaton(targetAutomatonName)?.type
+            } else {
+                context.resolveType(arg.type.processIdentifier())
+            }
+
+            if (argType == null) {
+                error("unresolved type")
+            }
+
             val annotation = arg.annotation()?.let { anno ->
-                Annotation(anno.Identifier().processIdentifier(), anno.valuesAndIdentifiersList()?.expression()?.map { atomic ->
+                val name = anno.Identifier().processIdentifier()
+                val values = anno.valuesAndIdentifiersList()?.expression()?.map { atomic ->
                     visitExpression(atomic)
-                }.orEmpty())
+                }.orEmpty()
+                if (name == "target") {
+                    val targetAutomatonName = arg.type.processIdentifier()
+                    val targetAutomaton = context.resolveAutomaton(targetAutomatonName)!!
+
+                    TargetAnnotation(name, values, targetAutomaton)
+                } else {
+                    Annotation(name, values)
+                }
             }
 
             FunctionArgument(argName, argType, argIndex++, annotation)
@@ -242,7 +264,7 @@ class ASGBuilder(
 
         }.orEmpty()
 
-        val targetAnnotation = args.firstOrNull { it.annotation?.name == "target" }
+        val argumentWithTargetAnno = args.firstOrNull { it.annotation?.name == "target" }
         val resolvedFunction = context.resolveFunction(
             functionName,
             automatonName=ownerAutomatonName,
@@ -250,17 +272,22 @@ class ASGBuilder(
             returnType = type
         ) ?: error("error on parsing function: $ownerAutomatonName.$functionName")
 
-        if (targetAnnotation != null) {
-            val target = context.resolveAutomaton(targetAnnotation.name) ?: error("unresolved automaton: $targetAnnotation")
+        if (argumentWithTargetAnno?.annotation?.name == "target") {
+            val target = (argumentWithTargetAnno.annotation as TargetAnnotation).targetAutomaton
             resolvedFunction.target = target
         } else {
             val automatonName = resolvedFunction.automatonName
             resolvedFunction.target = context.resolveAutomaton(automatonName) ?: error("unresolved automaton: $automatonName")
         }
 
+        args.forEach { arg ->
+            arg.function = resolvedFunction
+        }
+
         return resolvedFunction.apply {
             contracts = preamble
             statements = statementList
+            this.args = args
         }
     }
 

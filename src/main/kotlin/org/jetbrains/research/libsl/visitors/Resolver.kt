@@ -287,7 +287,13 @@ class Resolver(
         var argumentIndex = 0
         val args = ctx.functionDeclArgList()?.parameter()?.mapNotNull { arg ->
             val argTypeName = arg.type.processIdentifier()
-            val argType = context.resolveType(argTypeName)
+            val annotationName = arg.annotation()?.Identifier()?.processIdentifier()
+            val argType = if (annotationName == "target"){
+                val targetAutomaton = context.resolveAutomaton(argTypeName)
+                targetAutomaton?.type
+            } else {
+                context.resolveType(argTypeName)
+            }
             if (argType == null) {
                 errorManager(UnresolvedType(argTypeName, arg.type.position()))
                 return@mapNotNull null

@@ -46,6 +46,7 @@ fun testRunner(name: String) {
         .registerTypeAdapter(Library::class.java, librarySerializer)
         .registerTypeAdapter(Automaton::class.java, automatonSerializer)
         .registerTypeAdapter(Type::class.java, typeSerializer)
+        .registerTypeAdapter(FunctionArgument::class.java, functionArgumentsSerializer)
         .registerTypeAdapter(Variable::class.java, variableSerializer)
         .registerTypeAdapter(Annotation::class.java, annotationSerializer)
         .registerTypeAdapter(Function::class.java, functionSerializer)

@@ -184,7 +184,7 @@ enum class StateKind {
 data class Function(
     val name: String,
     val automatonName: String,
-    val args: List<FunctionArgument>,
+    var args: List<FunctionArgument>,
     val returnType: Type?,
     var contracts: List<Contract>,
     var statements: List<Statement>,
@@ -303,10 +303,24 @@ data class ResultVariable(
     override val name: String = "result"
 }
 
-data class Annotation(
+open class Annotation(
     val name: String,
     val values: List<Expression>
-)
+) {
+    override fun toString(): String {
+        return "Annotation(name='$name', values=$values)"
+    }
+}
+
+class TargetAnnotation(
+    name: String,
+    values: List<Expression>,
+    val targetAutomaton: Automaton
+) : Annotation(name, values) {
+    override fun toString(): String {
+        return "TargetAnnotation(name='$name', values=$values, target=$targetAutomaton)"
+    }
+}
 
 data class ConstructorArgument(
     override val name: String,
