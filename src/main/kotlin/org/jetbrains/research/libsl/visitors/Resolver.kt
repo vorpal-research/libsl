@@ -168,6 +168,9 @@ class Resolver(
         val name = ctx.left.text
         val resolvedRealType = context.resolveType(ctx.right.text)
             ?: processRealTypeIdentifier(ctx.right)
+
+        check(resolvedRealType is AliassableType)
+
         context.storeResolvedType(TypeAlias(
             name,
             resolvedRealType,
