@@ -1,6 +1,10 @@
 package org.jetbrains.research.libsl.asg
 
-interface PrimitiveType : Type
+interface PrimitiveType : Type, AliassableType {
+    override fun dumpToString(): String {
+        return fullName
+    }
+}
 
 data class IntType(
     override val context: LslContext,

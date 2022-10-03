@@ -31,7 +31,38 @@
           "args": [
             {
               "name": "param",
-              "type": "Int"
+              "type": "Int",
+              "annotation": {
+                "name": "annotation",
+                "args": []
+              }
+            }
+          ],
+          "contracts": [],
+          "statements": []
+        },
+        {
+          "name": "g",
+          "automaton": "A",
+          "target": "A",
+          "hasBody": false,
+          "args": [
+            {
+              "name": "param",
+              "type": "Int",
+              "annotation": {
+                "name": "anno",
+                "args": [
+                  {
+                    "kind": "integer",
+                    "value": 1
+                  },
+                  {
+                    "kind": "string",
+                    "value": "12"
+                  }
+                ]
+              }
             }
           ],
           "contracts": [],

@@ -57,7 +57,7 @@ class Resolver(
                         null
                     )
                 }
-            }
+            }.toMutableList()
 
             val constructorVariables = automatonCtx.nameWithType().mapNotNull { cVar ->
                 val argName = cVar.name.processIdentifier()
@@ -72,7 +72,7 @@ class Resolver(
                         argType
                     )
                 }
-            }
+            }.toMutableList()
 
             val states = automatonCtx.automatonStatement()?.filter { it.automatonStateDecl() != null }?.flatMap { statesCtx ->
                 statesCtx.automatonStateDecl().identifierList().Identifier().map { stateCtx ->
@@ -81,16 +81,16 @@ class Resolver(
                     val stateKind = StateKind.fromString(keyword)
                     State(stateName, stateKind)
                 }
-            }.orEmpty()
+            }.orEmpty().toMutableList()
 
             val automaton = Automaton(
                 automatonCtx.name.processIdentifier(),
                 type,
                 states,
-                listOf(),
+                mutableListOf(),
                 variables,
                 constructorVariables,
-                listOf(),
+                mutableListOf(),
             )
 
             context.storeResolvedAutomaton(automaton)
@@ -168,6 +168,9 @@ class Resolver(
         val name = ctx.left.text
         val resolvedRealType = context.resolveType(ctx.right.text)
             ?: processRealTypeIdentifier(ctx.right)
+
+        check(resolvedRealType is AliassableType)
+
         context.storeResolvedType(TypeAlias(
             name,
             resolvedRealType,
@@ -287,16 +290,31 @@ class Resolver(
         var argumentIndex = 0
         val args = ctx.functionDeclArgList()?.parameter()?.mapNotNull { arg ->
             val argTypeName = arg.type.processIdentifier()
-            val argType = context.resolveType(argTypeName)
+            val annotationName = arg.annotation()?.Identifier()?.processIdentifier()
+            val argType = if (annotationName == "target"){
+                val targetAutomaton = context.resolveAutomaton(argTypeName)
+                targetAutomaton?.type
+            } else {
+                context.resolveType(argTypeName)
+            }
             if (argType == null) {
                 errorManager(UnresolvedType(argTypeName, arg.type.position()))
                 return@mapNotNull null
             }
             FunctionArgument(arg.name.processIdentifier(), argType, argumentIndex++,null)
-        }?.toList().orEmpty()
+        }.orEmpty().toMutableList()
 
         val hasBody = ctx.functionBody() != null
-        val func = Function(name, automatonName, args, returnType, listOf(), listOf(), context, hasBody)
+        val func = Function(
+            name,
+            automatonName,
+            args,
+            returnType,
+            mutableListOf(),
+            mutableListOf(),
+            context = context,
+            hasBody = hasBody
+        )
 
         context.storeResolvedFunction(func)
 

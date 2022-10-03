@@ -24,7 +24,6 @@ class LibSL(
         val stream = CharStreams.fromString(string)
         val lexer = LibSLLexer(stream)
         val tokenStream = CommonTokenStream(lexer)
-        val context = LslContext()
         context.init()
         val parser = LibSLParser(tokenStream)
         if (errorListener != null) {

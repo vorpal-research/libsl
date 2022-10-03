@@ -1,15 +1,16 @@
 package org.jetbrains.research.libsl.asg
 
-import com.google.gson.*
+import com.google.gson.JsonArray
+import com.google.gson.JsonObject
+import com.google.gson.JsonSerializer
 
 val librarySerializer = JsonSerializer<Library> { src, _, context ->
     JsonObject().apply {
         addProperty("name", src.metadata.name)
 
         // add meta-information
-        if (src.metadata.lslVersion != null) {
-            addProperty("lslVersion", src.metadata.stringVersion)
-        }
+        addProperty("lslVersion", src.metadata.stringVersion)
+
         if (src.metadata.language != null) {
             addProperty("lang", src.metadata.language)
         }
@@ -159,7 +160,12 @@ val variableSerializer = JsonSerializer<Variable> { src, _, context ->
 val annotationSerializer = JsonSerializer<Annotation> { src, _, context ->
     JsonObject().apply {
         addProperty("name", src.name)
-        add("args", JsonArray().apply { src.values.forEach { context.serialize(it, Expression::class.java) } })
+        add("args", JsonArray().apply {
+            src.values.forEach { add(context.serialize(it, Expression::class.java)) }
+        })
+        if (src is TargetAnnotation) {
+            addProperty("automatonName", src.targetAutomaton.name)
+        }
     }
 }
 
@@ -231,18 +237,12 @@ val functionSerializer = JsonSerializer<Function> { src, _, context ->
         addProperty("name", src.name)
         addProperty("automaton", src.automatonName)
         addProperty("returnType", src.returnType?.fullName)
-        addProperty("target", src.target.name)
+        addProperty("target", src.target?.name)
         addProperty("hasBody", src.hasBody)
 
         add("args", JsonArray().apply {
             src.args.forEach { arg ->
-                add(JsonObject().apply {
-                    addProperty("name", arg.name)
-                    addProperty("type", arg.type.fullName)
-                    if (arg.annotation != null) {
-                        add("annotation", context.serialize(arg.annotation, kotlin.Annotation::class.java))
-                    }
-                })
+                add(context.serialize(arg, FunctionArgument::class.java))
             }
         })
 
@@ -381,6 +381,17 @@ val statementSerializer = JsonSerializer<Statement> { src, _, context ->
             add("args", JsonArray().apply {
                 src.arguments.forEach { arg -> add(context.serialize(arg, Expression::class.java)) }
             })
+        }
+    }
+}
+
+val functionArgumentsSerializer = JsonSerializer<FunctionArgument> { src, _, context ->
+    JsonObject().apply {
+        addProperty("name", src.name)
+        addProperty("type", src.type.fullName)
+        val anno = src.annotation
+        if (anno != null) {
+            add("annotation", context.serialize(anno, Annotation::class.java))
         }
     }
 }

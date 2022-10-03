@@ -406,7 +406,7 @@
                     "child": {
                       "kind": "variableAccess",
                       "name": "content",
-                      "type": "array",
+                      "type": "array\u003carray\u003cBoolean\u003e\u003e",
                       "child": {
                         "kind": "arrayAccess",
                         "index": {
@@ -439,7 +439,7 @@
                             "type": "Int"
                           }
                         },
-                        "type": "array",
+                        "type": "array\u003carray\u003cBoolean\u003e\u003e",
                         "child": {
                           "kind": "arrayAccess",
                           "index": {
@@ -472,7 +472,7 @@
                               "type": "Int"
                             }
                           },
-                          "type": "array"
+                          "type": "array\u003carray\u003cBoolean\u003e\u003e"
                         }
                       }
                     }
@@ -577,7 +577,7 @@
                       "child": {
                         "kind": "variableAccess",
                         "name": "content",
-                        "type": "array",
+                        "type": "array\u003carray\u003cBoolean\u003e\u003e",
                         "child": {
                           "kind": "arrayAccess",
                           "index": {
@@ -610,7 +610,7 @@
                               "type": "Int"
                             }
                           },
-                          "type": "array",
+                          "type": "array\u003carray\u003cBoolean\u003e\u003e",
                           "child": {
                             "kind": "arrayAccess",
                             "index": {
@@ -643,7 +643,7 @@
                                 "type": "Int"
                               }
                             },
-                            "type": "array"
+                            "type": "array\u003carray\u003cBoolean\u003e\u003e"
                           }
                         }
                       }
@@ -656,7 +656,7 @@
           "statements": [
             {
               "kind": "assignment",
-              "variable": "img.content.array[index]",
+              "variable": "img.content.array\u003carray\u003cBoolean\u003e\u003e[index]",
               "value": {
                 "kind": "unary",
                 "unaryOp": "inversion",
@@ -757,7 +757,7 @@
                     "child": {
                       "kind": "variableAccess",
                       "name": "content",
-                      "type": "array",
+                      "type": "array\u003carray\u003cBoolean\u003e\u003e",
                       "child": {
                         "kind": "arrayAccess",
                         "index": {
@@ -790,7 +790,7 @@
                             "type": "Int"
                           }
                         },
-                        "type": "array",
+                        "type": "array\u003carray\u003cBoolean\u003e\u003e",
                         "child": {
                           "kind": "arrayAccess",
                           "index": {
@@ -823,7 +823,7 @@
                               "type": "Int"
                             }
                           },
-                          "type": "array"
+                          "type": "array\u003carray\u003cBoolean\u003e\u003e"
                         }
                       }
                     }

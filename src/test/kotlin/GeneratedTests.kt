@@ -90,6 +90,12 @@ class GeneratedTests {
 
 
     @Test
+    fun testTargetAnnotation() {
+        testRunner("targetAnnotation")
+    }
+
+
+    @Test
     fun testTypes() {
         testRunner("types")
     }

@@ -1,0 +1,73 @@
+{
+  "name": "targetAnnotation",
+  "lslVersion": "1.0.0",
+  "types": [
+    {
+      "name": "Int",
+      "isPointer": false,
+      "kind": "simple",
+      "originalType": {
+        "name": "int32",
+        "isPointer": false,
+        "kind": "int32",
+        "capacity": "INT32"
+      }
+    },
+    {
+      "name": "A",
+      "isPointer": false,
+      "kind": "simple",
+      "originalType": {
+        "name": "Int",
+        "isPointer": false,
+        "kind": "simple",
+        "originalType": {
+          "name": "int32",
+          "isPointer": false,
+          "kind": "int32",
+          "capacity": "INT32"
+        }
+      }
+    }
+  ],
+  "automata": [
+    {
+      "name": "B",
+      "type": "Int",
+      "constructorVariables": [],
+      "variables": [],
+      "states": [],
+      "shifts": [],
+      "functions": []
+    },
+    {
+      "name": "A",
+      "type": "Int",
+      "constructorVariables": [],
+      "variables": [],
+      "states": [],
+      "shifts": [],
+      "functions": [
+        {
+          "name": "foo",
+          "automaton": "A",
+          "target": "B",
+          "hasBody": false,
+          "args": [
+            {
+              "name": "self",
+              "type": "Int",
+              "annotation": {
+                "name": "target",
+                "args": [],
+                "automatonName": "B"
+              }
+            }
+          ],
+          "contracts": [],
+          "statements": []
+        }
+      ]
+    }
+  ]
+}
